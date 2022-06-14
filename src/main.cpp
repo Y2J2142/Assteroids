@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <fmt/core.h>
 #include <functional>
+#include <numbers>
 #include <random>
 #include <vector>
 
@@ -40,6 +41,17 @@ struct Player : public Entity
 		speed = std::clamp(speed, 0.f, 5.f);
 
 		pos += dir * speed;
+	}
+	void draw_crosshair(sf::RenderTarget& rt)
+	{
+		auto r = radius / 5;
+		auto aim = sf::CircleShape{ r };
+		aim.setOrigin(r, r);
+		aim.setPosition(pos + sf::Vector2f{ 40, 0 });
+
+		sf::Transform t;
+		t.rotate(rot * 180 / std::numbers::pi, pos);
+		rt.draw(aim, t);
 	}
 };
 
@@ -187,6 +199,7 @@ struct World
 		std::ranges::for_each(bullets, [&rt](Bullet& b) { b.draw(rt); });
 		std::ranges::for_each(asteroids, [&rt](Asteroid& a) { a.draw(rt); });
 		p.draw(rt);
+		p.draw_crosshair(rt);
 	}
 };
 
